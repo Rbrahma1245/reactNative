@@ -38,8 +38,13 @@ function App(): JSX.Element {
   }
 
   function handleDelete(id: any) {
-    let todosList = todos.filter((elem: any) => elem.id != id);
+    let todosList = todos.filter((elem: IToDo) => elem.id != id);
     setTodos(todosList);
+  }
+
+  function handleEdit(id: any) {
+    let todosList = todos.find((elem: IToDo) => elem.id == id);
+    setName(todosList?.name!);
   }
 
   return (
@@ -71,7 +76,7 @@ function App(): JSX.Element {
 
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => handleDelete(todo.id)}>
+            onPress={() => handleEdit(todo.id)}>
             <Text style={{color: 'white'}}>Edit</Text>
           </TouchableOpacity>
 
