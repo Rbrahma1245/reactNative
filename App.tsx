@@ -11,9 +11,6 @@ import {
   Image,
 } from 'react-native';
 
-function add() {
-  Alert.alert('You tapped the button!');
-}
 interface IToDo {
   id: any;
   name: string;
@@ -79,7 +76,10 @@ function App(): JSX.Element {
         onChangeText={text => setName(text)}
         value={name}
       />
-      <Button title="ADD" onPress={addbtn} />
+     {
+      !edit_id ?  <Button title="ADD" onPress={addbtn} /> :
+      <Button title="UPDATE" onPress={addbtn} />
+     }
 
       {todos.map((todo: IToDo, index: number) => (
         <View style={styles.listItem} key={`${index}_${todo.name}`}>
