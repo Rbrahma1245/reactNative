@@ -18,24 +18,36 @@ interface IToDo {
   id: any;
   name: string;
 }
+let edit_id: any;
 
 function App(): JSX.Element {
   const [name, setName] = useState<string>('');
   const [todos, setTodos] = useState<IToDo[]>([]);
 
   function addbtn() {
-    if (name == '') {
+    if (!name) {
       Alert.alert('please fill the field');
     } else {
-      const newTodo = {
-        id: Date.now().toString(),
-        name: name,
-      };
-
-      setTodos([...todos, newTodo]);
+      if (!edit_id) {
+        const newTodo = {
+          id: Date.now().toString(),
+          name: name,
+        };
+        setTodos([...todos, newTodo]);
+        setName('');
+        console.log(todos);
+      } else {
+        todos.find((e, i) => {
+          if (e.id === edit_id) {
+            todos[i].name = name;
+          }
+        });
+        edit_id = undefined;
+      }
       setName('');
     }
   }
+  console.log(edit_id);
 
   function handleDelete(id: any) {
     let todosList = todos.filter((elem: IToDo) => elem.id != id);
@@ -43,8 +55,9 @@ function App(): JSX.Element {
   }
 
   function handleEdit(id: any) {
-    let todosList = todos.find((elem: IToDo) => elem.id == id);
-    setName(todosList?.name!);
+    edit_id = id;
+    let updateValue = todos.find((elem: IToDo) => elem.id == id);
+    setName(updateValue?.name!);
   }
 
   return (
@@ -72,20 +85,18 @@ function App(): JSX.Element {
         <View style={styles.listItem} key={`${index}_${todo.name}`}>
           <Text style={styles.text}>{todo.name}</Text>
 
-          <View style={{display:'flex', flexDirection: 'row',}}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => handleEdit(todo.id)}>
+              <Text style={{color: 'white'}}>Edit</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => handleEdit(todo.id)}>
-            <Text style={{color: 'white'}}>Edit</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleDelete(todo.id)}>
-            <Text style={{color: 'white'}}>X</Text>
-          </TouchableOpacity>
-
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => handleDelete(todo.id)}>
+              <Text style={{color: 'white'}}>X</Text>
+            </TouchableOpacity>
           </View>
         </View>
       ))}
@@ -133,7 +144,7 @@ const styles = StyleSheet.create({
   editButton: {
     alignItems: 'center',
     backgroundColor: 'blue',
-  
+
     borderRadius: 8,
     height: 50,
     width: 80,
